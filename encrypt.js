@@ -63,14 +63,15 @@ function logError(msg) {
 }
 
 function obfuscate(file, inputPath, outputPath, ignoreList) {
-  if (isIgnored(file, inputPath, ignoreList)) {
-    logInfo(`Skipped: ${path.relative(inputPath, file)}`);
-    return;
-  }
-
   const rel = path.relative(inputPath, file);
   const out = path.join(outputPath, rel);
   ensureDir(out);
+
+  if (isIgnored(file, inputPath, ignoreList)) {
+    fs.copyFileSync(file, out);
+    logInfo(`Copied (ignored): ${rel}`);
+    return;
+  }
 
   const ext = path.extname(file).toLowerCase();
 
@@ -90,16 +91,17 @@ function obfuscate(file, inputPath, outputPath, ignoreList) {
       logSuccess(`HTML minified: ${rel}`);
     } else {
       if (rel !== "ignore_encrypt.json") {
+        fs.copyFileSync(file, out);
         logInfo(`Copied: ${rel}`);
       } else {
         logInfo(`Skipped Copied: ${rel}`);
       }
-      fs.copyFileSync(file, out);
     }
   } catch (err) {
     logError(`Failed: ${rel} => ${err.message}`);
   }
 }
+
 
 async function main() {
   const inputPath = await ask("Enter input folder path: ");
