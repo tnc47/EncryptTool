@@ -90,11 +90,11 @@ function obfuscate(file, inputPath, outputPath, ignoreList) {
       logSuccess(`HTML minified: ${rel}`);
     } else {
       if (rel !== "ignore_encrypt.json") {
-        fs.copyFileSync(file, out);
         logInfo(`Copied: ${rel}`);
       } else {
         logInfo(`Skipped Copied: ${rel}`);
       }
+      fs.copyFileSync(file, out);
     }
   } catch (err) {
     logError(`Failed: ${rel} => ${err.message}`);
